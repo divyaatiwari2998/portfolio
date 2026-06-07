@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divya Tiwari — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lavender-pale: #f5f3f9;
+    --lavender-light: #ece7f5;
+    --lavender-mid: #d4c9e8;
+    --lavender-deep: #9b85c4;
+    --lavender-accent: #7c65b0;
+    --blush: #f7eef0;
+    --blush-mid: #e8cdd3;
+    --blush-deep: #c9899a;
+    --charcoal: #2c2a36;
+    --charcoal-2: #4a4758;
+    --charcoal-3: #7a7890;
+    --white: #ffffff;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Jost', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--lavender-pale);
+    color: var(--charcoal);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239b85c4' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 56px;
+    background: rgba(245,243,249,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--lavender-mid);
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.3rem; font-weight: 400; letter-spacing: 0.02em;
+    color: var(--charcoal); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--charcoal-3);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--lavender-accent); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 56px 80px;
+    gap: 80px;
+    position: relative;
+  }
+
+  /* Decorative blobs */
+  #hero::before {
+    content: '';
+    position: absolute; top: 10%; right: 5%;
+    width: 420px; height: 420px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,201,232,0.45) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #hero::after {
+    content: '';
+    position: absolute; bottom: 10%; left: 30%;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,205,211,0.35) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── PHOTO SIDE ── */
+  .hero-photo-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+    animation: fadeUp 0.8s ease both;
+    position: relative; z-index: 1;
+  }
+  .photo-ring {
+    position: relative;
+    width: 240px; height: 240px;
+  }
+  /* decorative ring */
+  .photo-ring::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 2px solid var(--lavender-mid);
+    animation: spin 18s linear infinite;
+  }
+  .photo-ring::after {
+    content: '';
+    position: absolute;
+    inset: -18px;
+    border-radius: 50%;
+    border: 1px dashed var(--blush-mid);
+    animation: spin 28s linear infinite reverse;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .photo-circle {
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--white);
+    box-shadow: 0 8px 40px rgba(124,101,176,0.18), 0 2px 12px rgba(0,0,0,0.08);
+    position: relative; z-index: 1;
+    background: var(--lavender-light);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .photo-circle img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top center;
+    display: block;
+  }
+  /* Placeholder shown when no real photo yet */
+  .photo-placeholder {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px; text-align: center; padding: 20px;
+  }
+  .photo-placeholder .icon { font-size: 3rem; opacity: 0.5; }
+  .photo-placeholder p { font-size: 0.72rem; color: var(--charcoal-3); line-height: 1.5; }
+  .photo-upload-hint {
+    font-size: 0.72rem; color: var(--lavender-accent);
+    text-align: center; max-width: 200px; line-height: 1.5;
+  }
+
+  /* name badge below photo */
+  .hero-badge {
+    background: var(--white);
+    border: 1px solid var(--lavender-mid);
+    border-radius: 40px;
+    padding: 10px 22px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(124,101,176,0.1);
+  }
+  .hero-badge-name { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; color: var(--charcoal); }
+  .hero-badge-title { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lavender-accent); margin-top: 2px; }
+
+  /* ── TEXT SIDE ── */
+  .hero-text {
+    flex: 1;
+    max-width: 580px;
+    position: relative; z-index: 1;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--lavender-accent);
+    background: var(--lavender-light);
+    border: 1px solid var(--lavender-mid);
+    padding: 6px 16px; border-radius: 30px; margin-bottom: 28px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .hero-tag::before { content: '✦'; font-size: 0.65rem; }
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(3.2rem, 5.5vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1.02;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+    animation: fadeUp 0.6s 0.1s ease both;
+    letter-spacing: -0.01em;
+  }
+  .hero-name em { font-style: italic; color: var(--lavender-accent); }
+  .hero-tagline {
+    font-family: var(--serif);
+    font-size: 1.25rem; font-weight: 300; font-style: italic;
+    color: var(--blush-deep);
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s 0.15s ease both;
+    letter-spacing: 0.01em;
+  }
+  .hero-sub {
+    font-size: 0.95rem; font-weight: 300; color: var(--charcoal-2);
+    line-height: 1.85; margin-bottom: 44px;
+    animation: fadeUp 0.6s 0.2s ease both;
+    max-width: 500px;
+  }
+  .hero-cta {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 30px; border-radius: 40px;
+    font-family: var(--sans); font-size: 0.82rem; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; cursor: pointer;
+    transition: all 0.25s; border: none;
+  }
+  .btn-primary { background: var(--lavender-accent); color: #fff; box-shadow: 0 4px 20px rgba(124,101,176,0.3); }
+  .btn-primary:hover { background: var(--charcoal); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(44,42,54,0.2); }
+  .btn-outline { background: transparent; color: var(--charcoal-2); border: 1.5px solid var(--lavender-mid); }
+  .btn-outline:hover { border-color: var(--lavender-accent); color: var(--lavender-accent); transform: translateY(-2px); }
+
+  /* pills under hero text */
+  .hero-pills {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+  .pill {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.05em;
+    padding: 5px 14px; border-radius: 20px;
+  }
+  .pill-lav { background: var(--lavender-light); color: var(--lavender-accent); border: 1px solid var(--lavender-mid); }
+  .pill-blush { background: var(--blush); color: var(--blush-deep); border: 1px solid var(--blush-mid); }
+  .pill-white { background: var(--white); color: var(--charcoal-3); border: 1px solid var(--lavender-mid); }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 96px 56px; position: relative; }
+  .section-label {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--lavender-accent); margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 300; line-height: 1.15; color: var(--charcoal); margin-bottom: 16px;
+  }
+  .section-title em { font-style: italic; color: var(--lavender-accent); }
+  .divider { width: 40px; height: 2px; background: var(--lavender-mid); margin-bottom: 52px; border-radius: 2px; }
+
+  /* ── ABOUT ── */
+  #about { background: var(--white); }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .about-body { font-size: 0.95rem; font-weight: 300; color: var(--charcoal-2); line-height: 1.9; }
+  .about-body p + p { margin-top: 18px; }
+  .about-right { display: flex; flex-direction: column; gap: 20px; }
+  .info-card {
+    background: var(--lavender-pale);
+    border: 1px solid var(--lavender-light);
+    border-radius: 10px; padding: 18px 22px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .info-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+  .info-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--charcoal-3); }
+  .info-val { font-size: 0.88rem; color: var(--charcoal); margin-top: 3px; }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--lavender-pale); }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+  .skill-item {
+    background: var(--white);
+    border: 1px solid var(--lavender-light);
+    border-radius: 10px; padding: 22px;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .skill-item:hover { border-color: var(--lavender-deep); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(124,101,176,0.1); }
+  .skill-item-icon { font-size: 1.6rem; margin-bottom: 12px; }
+  .skill-item-name { font-size: 0.9rem; font-weight: 500; color: var(--charcoal); }
+  .skill-item-type { font-size: 0.75rem; color: var(--charcoal-3); margin-top: 3px; font-weight: 300; }
+  .skill-bar { height: 3px; background: var(--lavender-light); border-radius: 2px; margin-top: 14px; }
+  .skill-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--lavender-deep), var(--blush-deep)); transition: width 1.2s ease; }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: var(--white); }
+  .exp-card {
+    border: 1px solid var(--lavender-light);
+    border-radius: 12px; padding: 40px 44px;
+    position: relative; overflow: hidden;
+    background: var(--lavender-pale);
+  }
+  .exp-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(to bottom, var(--lavender-accent), var(--blush-deep));
+  }
+  .exp-card::after {
+    content: '"';
+    font-family: var(--serif); font-size: 14rem; font-weight: 300;
+    color: var(--lavender-mid); opacity: 0.35;
+    position: absolute; right: 30px; top: -40px; line-height: 1;
+    pointer-events: none;
+  }
+  .exp-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+  .exp-role { font-family: var(--serif); font-size: 1.7rem; font-weight: 400; color: var(--charcoal); }
+  .exp-company { font-size: 0.88rem; font-weight: 400; color: var(--charcoal-3); margin-top: 4px; letter-spacing: 0.03em; }
+  .exp-date {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--lavender-accent); background: var(--white);
+    border: 1px solid var(--lavender-mid);
+    padding: 6px 16px; border-radius: 30px; white-space: nowrap;
+  }
+  .exp-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .exp-list li { display: flex; gap: 12px; font-size: 0.88rem; font-weight: 300; color: var(--charcoal-2); line-height: 1.7; }
+  .exp-list li::before { content: '◆'; color: var(--lavender-deep); flex-shrink: 0; font-size: 0.5rem; margin-top: 7px; }
+
+  /* ── PROJECTS ── */
+  #projects { background: var(--lavender-pale); }
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+  .project-card {
+    background: var(--white);
+    border: 1px solid var(--lavender-light);
+    border-radius: 12px; overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .project-card:hover { transform: translateY(-5px); box-shadow: 0 16px 48px rgba(124,101,176,0.13); }
+  .project-thumb {
+    height: 160px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.8rem;
+    position: relative; overflow: hidden;
+  }
+  .project-thumb-label {
+    position: absolute; bottom: 12px; right: 12px;
+    font-size: 0.68rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    background: rgba(255,255,255,0.88); color: var(--charcoal-3);
+    padding: 4px 10px; border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .project-body { padding: 26px; }
+  .project-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 400; color: var(--charcoal); margin-bottom: 10px; line-height: 1.3; }
+  .project-desc { font-size: 0.84rem; font-weight: 300; color: var(--charcoal-2); line-height: 1.75; margin-bottom: 20px; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .project-tag { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: var(--lavender-light); color: var(--lavender-accent); }
+  .project-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .project-link {
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em;
+    color: var(--lavender-accent); text-decoration: none;
+    border: 1px solid var(--lavender-mid);
+    padding: 7px 16px; border-radius: 30px;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .project-link:hover { background: var(--lavender-accent); color: #fff; border-color: var(--lavender-accent); }
+  .project-link.secondary { color: var(--charcoal-3); }
+  .project-link.secondary:hover { background: var(--charcoal); color: #fff; border-color: var(--charcoal); }
+
+  /* ── CERTIFICATIONS ── */
+  #certifications { background: var(--white); }
+  .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; }
+  .cert-card {
+    border: 1px solid var(--lavender-light);
+    border-radius: 10px; padding: 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    background: var(--lavender-pale);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .cert-card:hover { border-color: var(--blush-deep); transform: translateY(-2px); }
+  .cert-icon { font-size: 1.8rem; }
+  .cert-name { font-size: 0.9rem; font-weight: 500; color: var(--charcoal); line-height: 1.4; }
+  .cert-issuer { font-size: 0.75rem; font-weight: 300; color: var(--charcoal-3); }
+  .cert-link {
+    margin-top: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.76rem; font-weight: 500; letter-spacing: 0.04em;
+    color: var(--blush-deep); text-decoration: none;
+    border: 1px solid var(--blush-mid);
+    padding: 7px 16px; border-radius: 30px;
+    transition: all 0.2s; width: fit-content;
+  }
+  .cert-link:hover { background: var(--blush-deep); color: #fff; border-color: var(--blush-deep); }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--charcoal);
+    color: var(--lavender-pale);
+    text-align: center;
+  }
+  /* soft lavender glow in dark bg */
+  #contact::before {
+    content: '';
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(155,133,196,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #contact .section-label { color: var(--lavender-deep); }
+  #contact .section-title { color: var(--lavender-pale); }
+  #contact .section-title em { color: var(--lavender-deep); }
+  #contact .divider { background: var(--lavender-deep); opacity: 0.4; margin-left: auto; margin-right: auto; }
+  .contact-sub { font-size: 0.95rem; font-weight: 300; color: rgba(245,243,249,0.55); margin-bottom: 48px; max-width: 460px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+  .contact-links { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .contact-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.82rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 13px 28px; border-radius: 40px;
+    text-decoration: none; transition: all 0.25s;
+  }
+  .contact-link.email { background: var(--lavender-accent); color: #fff; }
+  .contact-link.email:hover { background: var(--lavender-deep); transform: translateY(-2px); }
+  .contact-link.outline { border: 1.5px solid rgba(212,201,232,0.35); color: var(--lavender-pale); }
+  .contact-link.outline:hover { border-color: var(--lavender-mid); transform: translateY(-2px); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--charcoal);
+    border-top: 1px solid rgba(212,201,232,0.08);
+    text-align: center; padding: 24px 56px;
+    font-size: 0.75rem; color: rgba(245,243,249,0.25);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(26px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    #hero { flex-direction: column; padding: 110px 24px 60px; gap: 48px; align-items: flex-start; }
+    section { padding: 64px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .exp-card { padding: 24px 22px; }
+    #contact { padding: 64px 24px; }
+    footer { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">Divya Tiwari</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+
+  <!-- LEFT: Photo -->
+  <div class="hero-photo-col">
+    <div class="photo-ring">
+      <div class="photo-circle" onclick="document.getElementById('photo-upload').click()" title="Click to upload your photo">
+        <!--
+          ══════════════════════════════════════════════
+          HOW TO ADD YOUR PHOTO — two easy options:
+
+          OPTION A (easiest): Replace the placeholder div below
+          with an <img> tag pointing to your photo file:
+            <img src="divya_photo.jpg" alt="Divya Tiwari">
+          Just put your photo in the same folder as this HTML file.
+
+          OPTION B: Upload via Google Drive and use:
+            <img src="YOUR_GOOGLE_DRIVE_DIRECT_IMAGE_LINK" alt="Divya Tiwari">
+          (In Drive: right-click image → Get link → change to "Anyone"
+           then use: https://drive.google.com/uc?id=YOUR_FILE_ID)
+          ══════════════════════════════════════════════
+        -->
+        <div class="photo-placeholder" id="placeholder-div">
+          <div class="icon">👤</div>
+          <p>Click here to<br>upload your photo</p>
+        </div>
+        <img id="preview-img" src="" alt="Divya Tiwari" style="display:none; width:100%; height:100%; object-fit:cover; object-position:top center;">
+      </div>
+    </div>
+    <input type="file" id="photo-upload" accept="image/*" style="display:none">
+    <p class="photo-upload-hint">Click the circle to preview your photo.<br>To make it permanent, see the code comment above.</p>
+    <div class="hero-badge">
+      <div class="hero-badge-name">Divya Tiwari</div>
+      <div class="hero-badge-title">MBA · B.Tech CSE · Haldwani</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Text -->
+  <div class="hero-text">
+    <span class="hero-tag">Open to Opportunities</span>
+    <h1 class="hero-name">Hello,<br>I'm <em>Divya.</em></h1>
+    <p class="hero-tagline">Where technology meets business insight.</p>
+    <p class="hero-sub">
+      I combine a software engineering foundation with an MBA in Business Analytics — which means I can build the system, analyse the data, and communicate what it all means for a business. I'm open to roles across data, analytics, operations, product, and technology.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">✦ View My Work</a>
+      <a href="#contact" class="btn btn-outline">Get in Touch</a>
+    </div>
+    <div class="hero-pills">
+      <span class="pill pill-lav">SQL</span>
+      <span class="pill pill-lav">Python</span>
+      <span class="pill pill-lav">Power BI</span>
+      <span class="pill pill-blush">Excel</span>
+      <span class="pill pill-blush">Machine Learning</span>
+      <span class="pill pill-white">Java</span>
+      <span class="pill pill-white">Agile</span>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div>
+      <p class="section-label">About Me</p>
+      <h2 class="section-title">Technology meets <em>business thinking</em></h2>
+      <div class="divider"></div>
+      <div class="about-body">
+        <p>I started as a software engineer at Capgemini, where I worked on enterprise systems, Agile workflows, and data validation — which gave me a grounded appreciation for how technology serves real people and organisations.</p>
+        <p>Pursuing my MBA in Business Analytics deepened that instinct. I learned to look at a dataset and ask not just "what does this say?" but "what should we do about it?" — and then build the tool that communicates the answer clearly.</p>
+        <p>I'm open to roles where I can contribute meaningfully, whether that's in data, operations, product, business analysis, or technology. I learn quickly, communicate well, and bring both technical depth and business context to whatever I work on.</p>
+      </div>
+    </div>
+    <div class="about-right reveal">
+      <div class="info-card">
+        <div class="info-icon">📍</div>
+        <div>
+          <div class="info-label">Location</div>
+          <div class="info-val">Haldwani, Uttarakhand, India</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">📧</div>
+        <div>
+          <div class="info-label">Email</div>
+          <div class="info-val">divyaatiwari2998@gmail.com</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">📱</div>
+        <div>
+          <div class="info-label">Phone</div>
+          <div class="info-val">+91 9997678534</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🎓</div>
+        <div>
+          <div class="info-label">Education</div>
+          <div class="info-val">MBA Business Analytics (2024–26) · B.Tech CSE (2016–20)</div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">💡</div>
+        <div>
+          <div class="info-label">Core Strengths</div>
+          <div class="info-val">Analytical thinking · Problem-solving · Data-driven decision making · Business communication</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label">What I Work With</p>
+  <h2 class="section-title">Skills &amp; <em>Tools</em></h2>
+  <div class="divider"></div>
+  <div class="skills-grid reveal">
+    <div class="skill-item">
+      <div class="skill-item-icon">🗄️</div>
+      <div class="skill-item-name">SQL</div>
+      <div class="skill-item-type">Database querying & analysis</div>
+      <div class="skill-bar"><div class="skill-fill" data-width="85%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-item-icon">📊</div>
+      <div class="skill-item-name">Power BI</div>
+      <div class="skill-item-type">Data visualisation & dashboards</div>
+      <div class="skill-bar"><div class="skill-fill" data-width="82%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-item-icon">🐍</div>
+      <div class="skill-item-name">Python</div>
+      <div class="skill-item-type">Data analysis & machine learning</div>
+      <div class="skill-bar"><div class="skill-fill" data-width="75%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-item-icon">📋</div>
+      <div class="skill-item-name">Microsoft Excel</div>
+      <div class="skill-item-type">Modelling, pivot tables, reporting</div>
+      <div class="skill-bar"><div class="skill-fill" data-width="88%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-item-icon">☕</div>
+      <div class="skill-item-name">Java</div>
+      <div class="skill-item-type">Application development</div>
+      <div class="skill-bar"><div class="skill-fill" data-width="65%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-item-icon">🤖</div>
+      <div class="skill-item-name">Machine Learning</div>
+      <div class="skill-item-type">Model building & evaluation</div>
+      <div class="skill-bar"><div class="skill-fill" data-width="70%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-item-icon">🔄</div>
+      <div class="skill-item-name">Agile / Scrum</div>
+      <div class="skill-item-type">Sprint planning, cross-team work</div>
+      <div class="skill-bar"><div class="skill-fill" data-width="80%"></div></div>
+    </div>
+    <div class="skill-item">
+      <div class="skill-item-icon">🗣️</div>
+      <div class="skill-item-name">Business Communication</div>
+      <div class="skill-item-type">Stakeholder reporting & insights</div>
+      <div class="skill-bar"><div class="skill-fill" data-width="90%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <p class="section-label">Work History</p>
+  <h2 class="section-title">Professional <em>Experience</em></h2>
+  <div class="divider"></div>
+  <div class="exp-card reveal">
+    <div class="exp-header">
+      <div>
+        <div class="exp-role">Software Engineer</div>
+        <div class="exp-company">Capgemini · Chennai, India</div>
+      </div>
+      <div class="exp-date">Jun 2021 – Jul 2022</div>
+    </div>
+    <ul class="exp-list">
+      <li>Worked in an enterprise IT environment with exposure to Agile workflows, software development practices, and cross-functional collaboration.</li>
+      <li>Contributed to the development of an Eye Clinic Management System covering patient records, appointment tracking, and reporting.</li>
+      <li>Participated in Agile sprints: sprint planning, feature coordination, and task management across project stages.</li>
+      <li>Performed functional testing and data validation to ensure system reliability and operational consistency.</li>
+      <li>Collaborated with team members to understand business requirements and align system functionality with operational needs.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="section-label">Selected Work</p>
+  <h2 class="section-title">Projects &amp; <em>Dashboards</em></h2>
+  <div class="divider"></div>
+  <div class="projects-grid">
+
+    <div class="project-card reveal">
+      <div class="project-thumb" style="background: linear-gradient(135deg, #ece7f5 0%, #d4c9e8 100%);">
+        📈
+        <span class="project-thumb-label">Power BI</span>
+      </div>
+      <div class="project-body">
+        <h3 class="project-title">Sales & Customer Behaviour Analysis</h3>
+        <p class="project-desc">Analysed 8,523 retail transactions to uncover customer behaviour trends and business performance gaps. Built an interactive Power BI dashboard centralising KPIs, sales trends, and outlet performance.</p>
+        <div class="project-tags">
+          <span class="project-tag">Power BI</span>
+          <span class="project-tag">Data Analysis</span>
+          <span class="project-tag">Retail</span>
+        </div>
+        <div class="project-links">
+          <!-- REPLACE # with your Google Drive link to the dashboard PDF/screenshot -->
+          <a href="#" class="project-link" target="_blank">📊 View Dashboard</a>
+          <!-- REPLACE # with your Google Drive link to the project report -->
+          <a href="#" class="project-link secondary" target="_blank">📄 Report</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-thumb" style="background: linear-gradient(135deg, #f7eef0 0%, #e8cdd3 100%);">
+        🎯
+        <span class="project-thumb-label">Python · RFM</span>
+      </div>
+      <div class="project-body">
+        <h3 class="project-title">Customer Segmentation using RFM Analysis</h3>
+        <p class="project-desc">Segmented customers by Recency, Frequency, and Monetary value to identify high-value and at-risk groups. Designed targeted engagement strategies to improve retention and lifetime value.</p>
+        <div class="project-tags">
+          <span class="project-tag">Python</span>
+          <span class="project-tag">RFM Analysis</span>
+          <span class="project-tag">Segmentation</span>
+        </div>
+        <div class="project-links">
+          <!-- REPLACE # with your Google Drive link to the project -->
+          <a href="#" class="project-link" target="_blank">📊 View Project</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-thumb" style="background: linear-gradient(135deg, #e8eff5 0%, #c9d8e8 100%);">
+        🏥
+        <span class="project-thumb-label">Java · Enterprise</span>
+      </div>
+      <div class="project-body">
+        <h3 class="project-title">Eye Clinic Management System</h3>
+        <p class="project-desc">Designed a data-driven application integrating patient management, reporting, and appointment tracking to streamline healthcare operations at Capgemini.</p>
+        <div class="project-tags">
+          <span class="project-tag">Java</span>
+          <span class="project-tag">System Design</span>
+          <span class="project-tag">Healthcare</span>
+        </div>
+        <div class="project-links">
+          <!-- REPLACE # with your Google Drive link to project documentation -->
+          <a href="#" class="project-link" target="_blank">📄 View Details</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <p class="section-label">Credentials</p>
+  <h2 class="section-title">Certifications &amp; <em>Training</em></h2>
+  <div class="divider"></div>
+  <div class="certs-grid">
+    <div class="cert-card reveal">
+      <div class="cert-icon">📋</div>
+      <div class="cert-name">Business Analysis Certification Program</div>
+      <div class="cert-issuer">Udemy</div>
+      <!-- REPLACE # with your Google Drive link to this certificate -->
+      <a href="#" class="cert-link" target="_blank">🔗 View Certificate</a>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🔬</div>
+      <div class="cert-name">Data Science Master's Program</div>
+      <div class="cert-issuer">Simplilearn</div>
+      <!-- REPLACE # with your Google Drive link to this certificate -->
+      <a href="#" class="cert-link" target="_blank">🔗 View Certificate</a>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🔄</div>
+      <div class="cert-name">Agile Software Development</div>
+      <div class="cert-issuer">Coursera</div>
+      <!-- REPLACE # with your Google Drive link to this certificate -->
+      <a href="#" class="cert-link" target="_blank">🔗 View Certificate</a>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🤖</div>
+      <div class="cert-name">Machine Learning</div>
+      <div class="cert-issuer">Internshala</div>
+      <!-- REPLACE # with your Google Drive link to this certificate -->
+      <a href="#" class="cert-link" target="_blank">🔗 View Certificate</a>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🏗️</div>
+      <div class="cert-name">JEE Full-Stack Development Training</div>
+      <div class="cert-issuer">Capgemini (Internal)</div>
+      <!-- REPLACE # with your Google Drive link if available -->
+      <a href="#" class="cert-link" target="_blank">🔗 View Details</a>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">🧠</div>
+      <div class="cert-name">Machine Learning Internship</div>
+      <div class="cert-issuer">HackerEarth</div>
+      <!-- REPLACE # with your Google Drive link to the internship certificate -->
+      <a href="#" class="cert-link" target="_blank">🔗 View Certificate</a>
+    </div>
+  </div>
+  <p style="margin-top:32px; font-size:0.8rem; color:var(--charcoal-3); font-style:italic; font-weight:300;">
+    All certificates open directly from Google Drive — no download required.
+  </p>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">Let's Connect</p>
+  <h2 class="section-title">Open to <em>Conversations</em></h2>
+  <div class="divider"></div>
+  <p class="contact-sub">Whether you have a role in mind, a project to discuss, or just want to say hello — my inbox is open.</p>
+  <div class="contact-links">
+    <a href="mailto:divyaatiwari2998@gmail.com" class="contact-link email">✉️ divyaatiwari2998@gmail.com</a>
+    <a href="tel:+919997678534" class="contact-link outline">📱 +91 9997678534</a>
+  </div>
+</section>
+
+<footer>
+  © 2025 Divya Tiwari · Haldwani, Uttarakhand, India
+</footer>
+
+<script>
+  // Photo upload preview
+  const upload = document.getElementById('photo-upload');
+  const preview = document.getElementById('preview-img');
+  const placeholder = document.getElementById('placeholder-div');
+  upload.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 90);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Skill bar animation
+  const skillsSection = document.querySelector('#skills');
+  let skillsAnimated = false;
+  const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !skillsAnimated) {
+        skillsAnimated = true;
+        document.querySelectorAll('.skill-fill').forEach((bar, i) => {
+          const target = bar.dataset.width;
+          bar.style.width = '0%';
+          setTimeout(() => { bar.style.width = target; }, 100 + i * 60);
+        });
+      }
+    });
+  }, { threshold: 0.2 });
+  if (skillsSection) skillObserver.observe(skillsSection);
+</script>
+</body>
+</html>

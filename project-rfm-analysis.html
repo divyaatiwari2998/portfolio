@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Segmentation using RFM Analysis — Divya Tiwari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lavender-pale: #f5f3f9;
+    --lavender-light: #ece7f5;
+    --lavender-mid: #d4c9e8;
+    --lavender-deep: #9b85c4;
+    --lavender-accent: #7c65b0;
+    --blush: #f7eef0;
+    --blush-mid: #e8cdd3;
+    --blush-deep: #c9899a;
+    --charcoal: #2c2a36;
+    --charcoal-2: #4a4758;
+    --charcoal-3: #7a7890;
+    --white: #ffffff;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Jost', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--lavender-pale);
+    color: var(--charcoal);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239b85c4' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 56px;
+    background: rgba(245,243,249,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--lavender-mid);
+  }
+  .nav-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; color: var(--charcoal); text-decoration: none; }
+  .nav-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--charcoal-3);
+    text-decoration: none; transition: color 0.2s;
+    border: 1px solid var(--lavender-mid);
+    padding: 8px 20px; border-radius: 30px;
+  }
+  .nav-back:hover { color: var(--lavender-accent); border-color: var(--lavender-accent); }
+
+  .project-hero {
+    min-height: 52vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 140px 56px 64px;
+    background: linear-gradient(135deg, #f7eef0 0%, #e8cdd3 60%, #ece7f5 100%);
+    position: relative; overflow: hidden;
+  }
+  .project-hero::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,137,154,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .project-hero::after {
+    content: '🎯';
+    position: absolute; right: 80px; top: 50%; transform: translateY(-50%);
+    font-size: 9rem; opacity: 0.12; pointer-events: none;
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(-50%) translateX(0)} 50%{transform:translateY(-54%) translateX(-8px)} }
+
+  .project-category {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--blush-deep);
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--blush-mid);
+    padding: 6px 16px; border-radius: 30px; margin-bottom: 20px;
+    width: fit-content; backdrop-filter: blur(8px);
+  }
+  .project-hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
+    font-weight: 300; line-height: 1.1;
+    color: var(--charcoal); margin-bottom: 18px;
+  }
+  .project-hero-title em { font-style: italic; color: var(--blush-deep); }
+  .project-hero-meta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .meta-pill {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em;
+    padding: 5px 14px; border-radius: 20px;
+    background: rgba(255,255,255,0.72); color: var(--charcoal-2);
+    border: 1px solid rgba(201,137,154,0.3);
+    backdrop-filter: blur(4px);
+  }
+
+  main { max-width: 980px; margin: 0 auto; padding: 80px 40px 120px; position: relative; z-index: 1; }
+
+  .block { margin-bottom: 72px; }
+  .block-label {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--blush-deep); margin-bottom: 10px;
+  }
+  .block-title {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    font-weight: 300; color: var(--charcoal); margin-bottom: 16px;
+  }
+  .block-title em { font-style: italic; color: var(--blush-deep); }
+  .divider { width: 40px; height: 2px; background: var(--blush-mid); margin-bottom: 32px; border-radius: 2px; }
+  .body-text { font-size: 0.95rem; font-weight: 300; color: var(--charcoal-2); line-height: 1.9; }
+  .body-text p + p { margin-top: 16px; }
+
+  /* RFM EXPLAINER CARDS */
+  .rfm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+  .rfm-card {
+    background: var(--white); border: 1px solid var(--blush-mid);
+    border-radius: 14px; padding: 32px 24px; text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .rfm-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blush-deep), var(--lavender-accent));
+  }
+  .rfm-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(201,137,154,0.15); }
+  .rfm-letter { font-family: var(--serif); font-size: 3.6rem; font-weight: 300; color: var(--blush-deep); line-height: 1; margin-bottom: 10px; }
+  .rfm-word { font-size: 0.88rem; font-weight: 600; color: var(--charcoal); letter-spacing: 0.04em; margin-bottom: 10px; }
+  .rfm-desc { font-size: 0.78rem; font-weight: 300; color: var(--charcoal-3); line-height: 1.6; }
+
+  /* SEGMENT CARDS */
+  .segments-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .seg-card {
+    border-radius: 12px; padding: 22px 20px;
+    border: 1px solid var(--lavender-light);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .seg-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(124,101,176,0.1); }
+  .seg-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: 14px; }
+  .seg-name { font-size: 0.88rem; font-weight: 600; color: var(--charcoal); margin-bottom: 6px; }
+  .seg-desc { font-size: 0.76rem; font-weight: 300; color: var(--charcoal-3); line-height: 1.5; margin-bottom: 12px; }
+  .seg-strategy { font-size: 0.72rem; color: var(--lavender-accent); font-style: italic; }
+
+  /* IMAGE CARDS */
+  .image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 32px; }
+  .img-card { border-radius: 12px; overflow: hidden; border: 1px solid var(--lavender-light); background: var(--white); transition: transform 0.25s, box-shadow 0.25s; }
+  .img-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(124,101,176,0.12); }
+  .img-placeholder { width: 100%; aspect-ratio: 16/9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: all 0.25s; }
+  .img-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .img-placeholder.has-placeholder { background: linear-gradient(135deg, #f7eef0 0%, #f0e4e8 100%); }
+  .img-placeholder-icon { font-size: 2.4rem; opacity: 0.5; }
+  .img-placeholder-text { font-size: 0.8rem; color: var(--charcoal-3); text-align: center; padding: 0 20px; line-height: 1.5; }
+  .img-placeholder-hint { font-size: 0.7rem; color: var(--blush-deep); font-style: italic; }
+  .img-upload-input { display: none; }
+  .img-card-label { padding: 14px 18px; font-size: 0.82rem; font-weight: 500; color: var(--charcoal); border-top: 1px solid var(--lavender-light); background: var(--white); }
+  .img-card-sublabel { font-size: 0.72rem; color: var(--charcoal-3); font-weight: 300; margin-top: 2px; }
+
+  /* STRATEGY TABLE */
+  .strategy-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 12px; overflow: hidden; border: 1px solid var(--lavender-light); }
+  .strategy-table th { background: var(--lavender-light); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--charcoal-2); padding: 14px 20px; text-align: left; }
+  .strategy-table td { font-size: 0.84rem; font-weight: 300; color: var(--charcoal-2); padding: 14px 20px; border-top: 1px solid var(--lavender-light); line-height: 1.6; }
+  .strategy-table tr:hover td { background: var(--lavender-pale); }
+  .seg-badge { display: inline-block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 14px; }
+
+  .tools-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tool-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.05em; padding: 8px 18px; border-radius: 30px; background: var(--blush); color: var(--blush-deep); border: 1px solid var(--blush-mid); }
+
+  .process-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .step-card { background: var(--white); border: 1px solid var(--blush-mid); border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
+  .step-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--blush-deep), var(--lavender-accent)); }
+  .step-num { font-family: var(--serif); font-size: 2.2rem; font-weight: 300; color: var(--blush-mid); line-height: 1; margin-bottom: 10px; }
+  .step-title { font-size: 0.88rem; font-weight: 600; color: var(--charcoal); margin-bottom: 8px; }
+  .step-desc { font-size: 0.8rem; font-weight: 300; color: var(--charcoal-3); line-height: 1.6; }
+
+  .cta-block { background: var(--charcoal); border-radius: 16px; padding: 52px 48px; text-align: center; position: relative; overflow: hidden; }
+  .cta-block::before { content: ''; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 400px; height: 300px; background: radial-gradient(ellipse, rgba(201,137,154,0.15) 0%, transparent 70%); pointer-events: none; }
+  .cta-title { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; color: var(--lavender-pale); margin-bottom: 12px; }
+  .cta-sub { font-size: 0.88rem; color: var(--charcoal-3); margin-bottom: 32px; font-weight: 300; }
+  .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 30px; border-radius: 40px; font-family: var(--sans); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; transition: all 0.25s; }
+  .btn-primary { background: var(--blush-deep); color: #fff; box-shadow: 0 4px 20px rgba(201,137,154,0.3); }
+  .btn-primary:hover { background: #b8788a; transform: translateY(-2px); }
+  .btn-outline-light { background: transparent; color: var(--lavender-pale); border: 1.5px solid rgba(155,133,196,0.4); }
+  .btn-outline-light:hover { border-color: var(--lavender-deep); background: rgba(155,133,196,0.08); }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .project-hero { padding: 120px 24px 48px; }
+    main { padding: 48px 24px 80px; }
+    .rfm-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Divya Tiwari</a>
+  <a href="index.html#projects" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<div class="project-hero">
+  <div class="project-category">✦ Python · Customer Analytics</div>
+  <h1 class="project-hero-title">Customer Segmentation <em>using RFM Analysis</em></h1>
+  <div class="project-hero-meta">
+    <span class="meta-pill">🐍 Python</span>
+    <span class="meta-pill">📊 RFM Scoring</span>
+    <span class="meta-pill">👥 Customer Segmentation</span>
+    <span class="meta-pill">📅 MBA Project · 2025</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- RFM EXPLAINER -->
+  <div class="block reveal">
+    <p class="block-label">Framework</p>
+    <h2 class="block-title">What is <em>RFM Analysis?</em></h2>
+    <div class="divider"></div>
+    <div class="body-text" style="margin-bottom:32px;">
+      <p>RFM is a proven customer analytics framework used in retail, e-commerce, and CRM strategy. It scores each customer on three behavioural dimensions, enabling data-driven segmentation without the need for complex modelling.</p>
+    </div>
+    <div class="rfm-grid">
+      <div class="rfm-card">
+        <div class="rfm-letter">R</div>
+        <div class="rfm-word">Recency</div>
+        <div class="rfm-desc">How recently did the customer make a purchase? Recent buyers are more likely to respond to campaigns.</div>
+      </div>
+      <div class="rfm-card">
+        <div class="rfm-letter">F</div>
+        <div class="rfm-word">Frequency</div>
+        <div class="rfm-desc">How often do they purchase? High-frequency customers show strong brand loyalty and habitual buying behaviour.</div>
+      </div>
+      <div class="rfm-card">
+        <div class="rfm-letter">M</div>
+        <div class="rfm-word">Monetary Value</div>
+        <div class="rfm-desc">How much do they spend in total? High-value customers contribute disproportionately to revenue.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT VISUALS -->
+  <div class="block reveal">
+    <p class="block-label">Outputs & Visuals</p>
+    <h2 class="block-title">Project <em>Results</em></h2>
+    <div class="divider"></div>
+    <p class="body-text" style="margin-bottom:24px;">Upload your Python output plots, charts, and segment visualisations below. Click each card to add an image.</p>
+    <div class="image-grid">
+
+      <div class="img-card">
+        <label for="img1" style="cursor:pointer; display:block;">
+          <div class="img-placeholder has-placeholder" id="placeholder1">
+            <div class="img-placeholder-icon">📊</div>
+            <div class="img-placeholder-text">RFM Score Distribution</div>
+            <div class="img-placeholder-hint">Click to upload your plot</div>
+          </div>
+          <input type="file" accept="image/*" class="img-upload-input" id="img1" onchange="previewImg(this,'placeholder1')">
+        </label>
+        <div class="img-card-label">RFM Score Distribution
+          <div class="img-card-sublabel">Histogram / Box plot of R, F, M scores</div>
+        </div>
+      </div>
+
+      <div class="img-card">
+        <label for="img2" style="cursor:pointer; display:block;">
+          <div class="img-placeholder has-placeholder" id="placeholder2">
+            <div class="img-placeholder-icon">🎯</div>
+            <div class="img-placeholder-text">Customer Segments Chart</div>
+            <div class="img-placeholder-hint">Click to upload your plot</div>
+          </div>
+          <input type="file" accept="image/*" class="img-upload-input" id="img2" onchange="previewImg(this,'placeholder2')">
+        </label>
+        <div class="img-card-label">Segment Distribution
+          <div class="img-card-sublabel">Count / % of customers per segment</div>
+        </div>
+      </div>
+
+      <div class="img-card">
+        <label for="img3" style="cursor:pointer; display:block;">
+          <div class="img-placeholder has-placeholder" id="placeholder3">
+            <div class="img-placeholder-icon">💰</div>
+            <div class="img-placeholder-text">Revenue by Segment</div>
+            <div class="img-placeholder-hint">Click to upload your plot</div>
+          </div>
+          <input type="file" accept="image/*" class="img-upload-input" id="img3" onchange="previewImg(this,'placeholder3')">
+        </label>
+        <div class="img-card-label">Revenue Contribution
+          <div class="img-card-sublabel">Monetary value per customer segment</div>
+        </div>
+      </div>
+
+      <div class="img-card">
+        <label for="img4" style="cursor:pointer; display:block;">
+          <div class="img-placeholder has-placeholder" id="placeholder4">
+            <div class="img-placeholder-icon">🗺️</div>
+            <div class="img-placeholder-text">Segment Heat Map / Scatter</div>
+            <div class="img-placeholder-hint">Click to upload your plot</div>
+          </div>
+          <input type="file" accept="image/*" class="img-upload-input" id="img4" onchange="previewImg(this,'placeholder4')">
+        </label>
+        <div class="img-card-label">Recency vs Frequency Plot
+          <div class="img-card-sublabel">Scatter coloured by segment</div>
+        </div>
+      </div>
+
+    </div>
+    <p style="font-size:0.78rem; color:var(--charcoal-3); font-style:italic; font-weight:300;">
+      💡 Save your Python plots as PNG/JPG and upload here. For a permanent portfolio, commit the images to your GitHub repo and update the src paths.
+    </p>
+  </div>
+
+  <!-- METHODOLOGY -->
+  <div class="block reveal">
+    <p class="block-label">Methodology</p>
+    <h2 class="block-title">Step-by-Step <em>Approach</em></h2>
+    <div class="divider"></div>
+    <div class="process-steps">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-title">Data Preparation</div>
+        <div class="step-desc">Loaded transaction data into Python using Pandas. Cleaned nulls, standardised date columns, and computed per-customer aggregates.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-title">RFM Scoring</div>
+        <div class="step-desc">Calculated Recency (days since last purchase), Frequency (order count), and Monetary Value (total spend) for each customer using quantile-based scoring (1–5).</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-title">Segmentation</div>
+        <div class="step-desc">Combined RFM scores to classify customers into segments: Champions, Loyal, At-Risk, Lost, Potential Loyalists, and New Customers.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-title">Strategy Design</div>
+        <div class="step-desc">For each segment, designed targeted engagement strategies — retention campaigns for at-risk customers, loyalty rewards for champions, re-activation for lost ones.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEGMENTS TABLE -->
+  <div class="block reveal">
+    <p class="block-label">Segments Identified</p>
+    <h2 class="block-title">Customer <em>Segments & Strategies</em></h2>
+    <div class="divider"></div>
+    <table class="strategy-table">
+      <thead>
+        <tr>
+          <th>Segment</th>
+          <th>Profile</th>
+          <th>Recommended Strategy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="seg-badge" style="background:#ece7f5;color:#7c65b0;">🏆 Champions</span></td>
+          <td>Bought recently, buy often, spend the most</td>
+          <td>Reward with exclusive offers, ask for reviews, make them brand advocates</td>
+        </tr>
+        <tr>
+          <td><span class="seg-badge" style="background:#f7eef0;color:#c9899a;">💙 Loyal Customers</span></td>
+          <td>Frequent buyers with consistent spend</td>
+          <td>Upsell higher-value products, enrol in loyalty programmes</td>
+        </tr>
+        <tr>
+          <td><span class="seg-badge" style="background:#e8eff5;color:#5585a8;">🌱 Potential Loyalists</span></td>
+          <td>Recent customers with moderate frequency</td>
+          <td>Offer membership or loyalty cards, provide personalised follow-ups</td>
+        </tr>
+        <tr>
+          <td><span class="seg-badge" style="background:#fdf5e0;color:#a08030;">⚠️ At-Risk</span></td>
+          <td>Previously good customers now inactive</td>
+          <td>Send win-back campaigns, offer limited-time discounts, survey on experience</td>
+        </tr>
+        <tr>
+          <td><span class="seg-badge" style="background:#f5f0f0;color:#9a7070;">😴 Hibernating</span></td>
+          <td>Low scores across all three dimensions</td>
+          <td>Share valuable content, offer product refreshes, reactivation email flow</td>
+        </tr>
+        <tr>
+          <td><span class="seg-badge" style="background:#f0f5f0;color:#508050;">🆕 New Customers</span></td>
+          <td>Bought recently but only once</td>
+          <td>Provide onboarding experience, start building the relationship early</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TOOLS -->
+  <div class="block reveal">
+    <p class="block-label">Tools & Technologies</p>
+    <h2 class="block-title">Tech <em>Stack</em></h2>
+    <div class="divider"></div>
+    <div class="tools-grid">
+      <span class="tool-badge">🐍 Python</span>
+      <span class="tool-badge">🐼 Pandas</span>
+      <span class="tool-badge">📊 Matplotlib</span>
+      <span class="tool-badge">🌊 Seaborn</span>
+      <span class="tool-badge">📓 Jupyter Notebook</span>
+      <span class="tool-badge">🎯 RFM Scoring</span>
+      <span class="tool-badge">👥 Customer Analytics</span>
+      <span class="tool-badge">📈 CRM Strategy</span>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block reveal">
+    <h3 class="cta-title">Interested in the code or notebook?</h3>
+    <p class="cta-sub">Add your GitHub or Kaggle link to share the full Python notebook.</p>
+    <div class="cta-buttons">
+      <!-- REPLACE # with your GitHub repo or Kaggle notebook link -->
+      <a href="#" class="btn btn-primary" target="_blank">🐍 View Notebook</a>
+      <!-- REPLACE # with your project report or additional file -->
+      <a href="#" class="btn btn-outline-light" target="_blank">📄 Download Report</a>
+      <a href="index.html#projects" class="btn btn-outline-light">← Back to Portfolio</a>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function previewImg(input, placeholderId) {
+    const placeholder = document.getElementById(placeholderId);
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      placeholder.innerHTML = `<img src="${e.target.result}" alt="Project output" style="width:100%;height:100%;object-fit:cover;">`;
+      placeholder.classList.remove('has-placeholder');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.06 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
